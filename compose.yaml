@@ -1,0 +1,66 @@
+services:
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0
+    command: start-dev --import-realm
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    volumes:
+      - ./keycloak/realm-export.json:/opt/keycloak/data/import/realm.json:ro
+      - keycloak_data:/opt/keycloak/data
+    ports:
+      - "127.0.0.1:8080:8080"
+    healthcheck:
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/127.0.0.1/8080; echo -e 'GET /health/ready HTTP/1.1\\r\\nHost: 127.0.0.1\\r\\nConnection: close\\r\\n\\r\\n' >&3; grep -q '200 OK' <&3"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      APP_ENV: production
+      HOST: "0.0.0.0"
+      PORT: 8000
+      DATABASE_URL: "sqlite+aiosqlite:////data/signallens.db"
+      OIDC_ENABLED: "true"
+      OIDC_ISSUER_URL: "http://keycloak:8080/realms/signallens"
+      OIDC_CLIENT_ID: "signallens-backend"
+      OIDC_AUDIENCE: "signallens-backend"
+      LLM_API_KEY: ""
+      LLM_PROVIDER: "openai-compatible"
+      LLM_MODEL: "gpt-4o-mini"
+      LLM_BASE_URL: "https://api.openai.com/v1"
+    volumes:
+      - backend_data:/data
+    ports:
+      - "127.0.0.1:8000:8000"
+    depends_on:
+      keycloak:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "127.0.0.1:3000:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:80/"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  keycloak_data:
+  backend_data:

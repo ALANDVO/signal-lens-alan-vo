@@ -1,0 +1,38 @@
+{
+  "realm": "signallens",
+  "enabled": true,
+  "roles": {
+    "realm": [
+      { "name": "viewer", "description": "Read-only access" },
+      { "name": "operator", "description": "Run simulations and diagnostics" },
+      { "name": "admin", "description": "Full administrative access" }
+    ]
+  },
+  "clients": [
+    {
+      "clientId": "signallens-app",
+      "enabled": true,
+      "publicClient": true,
+      "redirectUris": ["http://127.0.0.1:3000/*", "http://localhost:3000/*"],
+      "webOrigins": ["+"],
+      "standardFlowEnabled": true
+    },
+    {
+      "clientId": "signallens-backend",
+      "enabled": true,
+      "bearerOnly": true
+    }
+  ],
+  "identityProviders": [
+    {
+      "alias": "saml-idp-broker",
+      "providerId": "saml",
+      "enabled": false,
+      "config": {
+        "entityId": "http://127.0.0.1:8080/realms/signallens",
+        "singleSignOnServiceUrl": "https://saml.example.com/sso",
+        "nameIDPolicyFormat": "urn:oasis:names:tc:SAML:2.0:nameid-format:persistent"
+      }
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "name": "signal-lens-alan-vo",
+  "owner": "ALANDVO",
+  "email": "alanvo@gmail.com",
+  "domain": "AI/ML developer tools",
+  "summary": "Work in progress: signal-lens-alan-vo",
+  "workflows": [
+    "profile-memory-layer-simulation",
+    "layer-batch-schedule-optimization",
+    "compatibility-diagnostic-benchmark"
+  ],
+  "auth": "oidc-keycloak-saml-broker",
+  "llm_providers": [
+    "openai-compatible",
+    "anthropic",
+    "gemini",
+    "ollama"
+  ],
+  "version": "1.0.0",
+  "status": "work-in-progress"
+}
