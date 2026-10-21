@@ -1,6 +1,17 @@
 # Changelog
 
+## 1.1.0 — work-in-progress checkpoint
+
+Partial code published for continued development. Known issues: STATUS.md.
+
 ## 1.0.0 — work-in-progress checkpoint
+
+## [1.0.1] - 2026-10-21
+
+### Fixed
+- Resolved Pydantic v2 protected namespace deprecation warnings for `model_name` fields in `ProfileRequest` and `ProfileResult` schemas by adding `model_config = ConfigDict(protected_namespaces=())`.
+- Migrated `Settings` class from deprecated class-based `Config` to `model_config = SettingsConfigDict(...)` for pydantic-settings v2 compatibility.
+- Eliminated all deprecation warnings from test runs; 18 backend and 3 frontend tests pass cleanly.
 
 Partial code published for continued development. Known issues: STATUS.md.
 

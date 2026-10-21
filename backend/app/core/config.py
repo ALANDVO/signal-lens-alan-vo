@@ -1,8 +1,14 @@
 """Core application configuration and settings."""
 from typing import Optional
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
+
 
 class Settings(BaseSettings):
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        extra="ignore"
+    )
+
     APP_NAME: str = "SignalLens"
     APP_ENV: str = "demo"  # 'demo' or 'production'
     HOST: str = "127.0.0.1"
@@ -22,8 +28,5 @@ class Settings(BaseSettings):
     LLM_MODEL: str = "gpt-4o-mini"
     LLM_BASE_URL: str = "https://api.openai.com/v1"
 
-    class Config:
-        env_file = ".env"
-        extra = "ignore"
 
 settings = Settings()
