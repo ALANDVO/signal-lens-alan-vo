@@ -1,15 +1,18 @@
 """Pydantic schemas for request validation and response models."""
 from typing import List, Optional, Dict, Any
 from datetime import datetime
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 
 class ProfileRequest(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+
     model_name: str = Field(..., description="Target model name, e.g., Llama-2-70b, Llama-3-70b, Qwen-7B")
     parameter_count_billions: float = Field(70.0, ge=0.5, le=500.0)
     precision_bits: int = Field(4, description="Quantization bitwidth: 4, 8, 16")
     total_layers: int = Field(80, ge=1, le=200)
     context_length: int = Field(2048, ge=128, le=131072)
     target_vram_gb: float = Field(4.0, ge=1.0, le=96.0)
+
 
 class LayerProfileItem(BaseModel):
     layer_index: int
@@ -20,6 +23,8 @@ class LayerProfileItem(BaseModel):
     cumulative_vram_mb: float
 
 class ProfileResult(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+
     id: Optional[int] = None
     model_name: str
     parameter_count_billions: float
