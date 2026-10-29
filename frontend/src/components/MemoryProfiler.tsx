@@ -22,11 +22,11 @@ export const MemoryProfiler: React.FC = () => {
     try {
       const req: ProfileRequest = {
         model_name: modelName,
-        parameter_count_billions: Number(paramsB),
-        precision_bits: Number(bits),
-        total_layers: Number(layers),
-        context_length: Number(contextLen),
-        target_vram_gb: Number(targetVram)
+        parameter_count_billions: paramsB,
+        precision_bits: bits,
+        total_layers: layers,
+        context_length: contextLen,
+        target_vram_gb: targetVram
       };
       const res = await apiClient.createProfile(req);
       setResult(res);
@@ -41,6 +41,41 @@ export const MemoryProfiler: React.FC = () => {
       setError(err.message || 'Error executing simulation');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleExport = (format: 'json' | 'csv') => {
+    if (!result) return;
+    const data = {
+      ...result,
+      advisory: advisory || undefined,
+      request: {
+        model_name: modelName,
+        parameter_count_billions: paramsB,
+        precision_bits: bits,
+        total_layers: layers,
+        context_length: contextLen,
+        target_vram_gb: targetVram
+      }
+    };
+    if (format === 'json') {
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `profile-${modelName.replace(/[^a-z0-9]/gi, '-')}-${Date.now()}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } else {
+      const layersCsv = result.layers.map(l => `${l.layer_index},${l.name},${l.param_size_mb},${l.activation_size_mb},${l.kv_cache_size_mb},${l.cumulative_vram_mb}`).join('\n');
+      const csv = `Model,Parameter_Billions,Precision_Bits,Total_Layers,Context_Length,Target_VRAM_GB,Single_Layer_VRAM_MB,Full_Model_VRAM_GB,Fits_In_VRAM,VRAM_Headroom_MB\n${modelName},${paramsB},${bits},${layers},${contextLen},${targetVram},${result.single_layer_vram_mb},${result.full_model_vram_gb},${result.fits_in_target_vram},${result.vram_headroom_mb}\n\nLayer_Index,Layer_Name,Param_Size_MB,Activation_Size_MB,KV_Cache_Size_MB,Cumulative_VRAM_MB\n${layersCsv}`;
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `profile-${modelName.replace(/[^a-z0-9]/gi, '-')}-${Date.now()}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
     }
   };
 
@@ -170,6 +205,10 @@ export const MemoryProfiler: React.FC = () => {
                 ))}
               </tbody>
             </table>
+          </div>
+          <div className="export-actions">
+            <button type="button" onClick={() => handleExport('json')} className="btn-secondary">Export JSON</button>
+            <button type="button" onClick={() => handleExport('csv')} className="btn-secondary">Export CSV</button>
           </div>
         </div>
       )}

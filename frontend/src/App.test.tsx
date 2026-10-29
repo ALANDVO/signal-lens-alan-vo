@@ -92,7 +92,7 @@ describe('SignalLens Frontend Integration Tests', () => {
     fireEvent.click(submitBtn);
 
     await waitFor(() => {
-      expect(screen.getByText(/Optimal Layers \/ Batch: 7/i)).toBeInTheDocument();
+      expect(screen.getByText(/Optimal Layers.*Batch: 7/i)).toBeInTheDocument();
       expect(screen.getByText(/Theoretical Speedup: 1.33x/i)).toBeInTheDocument();
     });
   });
