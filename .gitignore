@@ -15,3 +15,4 @@ coverage/
 .omp/
 .portfolio-review.json
 .portfolio-validation.json
+venv/

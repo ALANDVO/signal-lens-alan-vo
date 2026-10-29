@@ -24,6 +24,22 @@ Implementation: `backend/app/main.py`, `backend/app/core/config.py`, `backend/ap
 
 Tests: `backend/tests/test_profiler.py`, `backend/tests/test_scheduler.py`, `backend/tests/test_diagnostics.py`, `backend/tests/test_api.py`, `backend/tests/test_auth.py`, `frontend/src/App.test.tsx`
 
+### export-analysis-results — Export Analysis Results to JSON/CSV
+
+Status: done
+
+Acceptance:
+- Export Memory Profiler results (profile + layer breakdown) to JSON and CSV
+- Export Layer Scheduler results (schedule + chunks) to JSON and CSV
+- Export Diagnostic Console results (issues + compatibility score) to JSON and CSV
+- Export Audit Log entries to JSON and CSV
+- Include request parameters in exports for reproducibility
+- Export buttons integrated into each workflow UI
+
+Implementation: `frontend/src/components/MemoryProfiler.tsx`, `frontend/src/components/LayerScheduler.tsx`, `frontend/src/components/DiagnosticConsole.tsx`, `frontend/src/components/AuditLogView.tsx`, `frontend/src/index.css`
+
+Tests: `frontend/src/App.test.tsx`
+
 ### multi-gpu-heterogeneous-mesh — Heterogeneous Multi-GPU Pipeline Partitioning
 
 Status: planned

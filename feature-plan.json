@@ -42,6 +42,29 @@
       ]
     },
     {
+      "id": "export-analysis-results",
+      "title": "Export Analysis Results to JSON/CSV",
+      "status": "done",
+      "acceptance": [
+        "Export Memory Profiler results (profile + layer breakdown) to JSON and CSV",
+        "Export Layer Scheduler results (schedule + chunks) to JSON and CSV",
+        "Export Diagnostic Console results (issues + compatibility score) to JSON and CSV",
+        "Export Audit Log entries to JSON and CSV",
+        "Include request parameters in exports for reproducibility",
+        "Export buttons integrated into each workflow UI"
+      ],
+      "implementation": [
+        "frontend/src/components/MemoryProfiler.tsx",
+        "frontend/src/components/LayerScheduler.tsx",
+        "frontend/src/components/DiagnosticConsole.tsx",
+        "frontend/src/components/AuditLogView.tsx",
+        "frontend/src/index.css"
+      ],
+      "tests": [
+        "frontend/src/App.test.tsx"
+      ]
+    },
+    {
       "id": "multi-gpu-heterogeneous-mesh",
       "title": "Heterogeneous Multi-GPU Pipeline Partitioning",
       "status": "planned",

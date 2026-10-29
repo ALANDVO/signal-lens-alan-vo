@@ -19,6 +19,28 @@ export const AuditLogView: React.FC = () => {
     }
   };
 
+  const handleExport = (format: 'json' | 'csv') => {
+    if (logs.length === 0) return;
+    if (format === 'json') {
+      const blob = new Blob([JSON.stringify(logs, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `audit-log-${Date.now()}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } else {
+      const csv = `ID,Timestamp,Action,Operator_Sub,Details\n${logs.map(l => `${l.id},${new Date(l.timestamp).toISOString()},${l.action},${l.user_sub},"${l.details}"`).join('\n')}`;
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `audit-log-${Date.now()}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+  };
+
   useEffect(() => {
     fetchLogs();
   }, []);
@@ -27,9 +49,13 @@ export const AuditLogView: React.FC = () => {
     <div className="card">
       <div className="header-actions">
         <h2>System Audit Trail & Telemetry Records</h2>
-        <button onClick={fetchLogs} disabled={loading} className="btn-secondary">
-          {loading ? 'Refreshing...' : 'Refresh Logs'}
-        </button>
+        <div className="header-buttons">
+          <button onClick={fetchLogs} disabled={loading} className="btn-secondary">
+            {loading ? 'Refreshing...' : 'Refresh Logs'}
+          </button>
+          <button onClick={() => handleExport('json')} className="btn-secondary" disabled={logs.length === 0}>Export JSON</button>
+          <button onClick={() => handleExport('csv')} className="btn-secondary" disabled={logs.length === 0}>Export CSV</button>
+        </div>
       </div>
       <p className="description">
         Immutable record of all profiling simulations, schedule optimizations, and diagnostics executed against the SignalLens backend.

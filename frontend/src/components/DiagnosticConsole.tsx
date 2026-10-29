@@ -43,6 +43,40 @@ export const DiagnosticConsole: React.FC = () => {
     }
   };
 
+  const handleExport = (format: 'json' | 'csv') => {
+    if (!result) return;
+    const data = {
+      ...result,
+      advisory: advisory || undefined,
+      request: {
+        transformers_version: tfVersion,
+        torch_version: torchVersion,
+        has_cuda: hasCuda,
+        device_type: deviceType,
+        vram_gb: vramGb
+      }
+    };
+    if (format === 'json') {
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `diagnostic-${deviceType}-${tfVersion}-${Date.now()}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } else {
+      const issuesCsv = result.issues_found.map(i => `${i.category},${i.severity},"${i.summary}","${i.root_cause}","${i.recommended_fix}"`).join('\n');
+      const csv = `Transformers_Version,Torch_Version,Device_Type,Has_CUDA,VRAM_GB,Is_Compatible,Compatibility_Score,Issues_Found\n${tfVersion},${torchVersion},${deviceType},${hasCuda},${vramGb},${result.is_compatible},${result.compatibility_score},${result.issues_found.length}\n\nCategory,Severity,Summary,Root_Cause,Recommended_Fix\n${issuesCsv}`;
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `diagnostic-${deviceType}-${tfVersion}-${Date.now()}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+  };
+
   return (
     <div className="card">
       <h2>Workflow 3: Runtime Compatibility & Error Diagnostic</h2>
@@ -158,6 +192,10 @@ export const DiagnosticConsole: React.FC = () => {
               ))}
             </div>
           )}
+          <div className="export-actions">
+            <button type="button" onClick={() => handleExport('json')} className="btn-secondary">Export JSON</button>
+            <button type="button" onClick={() => handleExport('csv')} className="btn-secondary">Export CSV</button>
+          </div>
         </div>
       )}
     </div>
