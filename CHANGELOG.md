@@ -1,8 +1,19 @@
 # Changelog
 
-## 1.2.0 — work-in-progress checkpoint
+## 1.3.0 — work-in-progress checkpoint
 
 Partial code published for continued development. Known issues: STATUS.md.
+
+## 1.2.0 — 2026-11-05
+
+### Added
+- Combined Profile + Auto-Schedule endpoint (`POST /api/profile-and-schedule`) that runs memory profiling and automatically computes optimal layer batching schedule using the profiler's single-layer VRAM calculation.
+- New request/response schemas: `ProfileAndScheduleRequest`, `ProfileAndScheduleResult`.
+- Integration test for combined workflow verifying end-to-end profile persistence and schedule optimization.
+
+### Fixed
+- Sync version between `pyproject.toml` (1.0.0) and `VERSION` (1.2.0) to 1.2.0.
+- Update README version reference to 1.2.0.
 
 ## 1.1.0 — work-in-progress checkpoint
 

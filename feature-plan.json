@@ -12,7 +12,10 @@
         "Diagnose runtime issues such as DynamicCache, rotary_emb, and ROCm/CUDA configuration faults",
         "Deterministic offline core execution with SQLite audit trail and persistent simulations",
         "Advisory LLM analysis adapter supporting OpenAI-compatible, Anthropic, Gemini, and Ollama",
-        "OIDC auth flow with mock test harness and local demo mode"
+        "OIDC auth flow with mock test harness and local demo mode",
+        "Combined Profile + Auto-Schedule workflow (`POST /api/profile-and-schedule`) for one-click profiling and optimal batch scheduling"
+      ],
+      "implementation": [
       ],
       "implementation": [
         "backend/app/main.py",

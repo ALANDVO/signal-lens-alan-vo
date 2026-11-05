@@ -16,3 +16,13 @@ coverage/
 .portfolio-review.json
 .portfolio-validation.json
 venv/
+.turbo/
+.env.local
+.env.*.local
+**/data/media/
+*.db-wal
+*.db-shm
+*.sqlite-wal
+*.sqlite-shm
+*.sqlite3-wal
+*.sqlite3-shm

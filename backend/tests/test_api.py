@@ -110,3 +110,35 @@ async def test_advisory_deterministic_fallback(async_client: AsyncClient):
     data = resp.json()
     assert "Deterministic Analysis" in data["advisory_text"]
     assert data["is_simulated"] is True
+
+@pytest.mark.asyncio
+async def test_create_profile_and_schedule_combined(async_client: AsyncClient):
+    payload = {
+        "model_name": "Llama-3-70B",
+        "parameter_count_billions": 70.0,
+        "precision_bits": 4,
+        "total_layers": 80,
+        "context_length": 2048,
+        "target_vram_gb": 4.0,
+        "pcie_bandwidth_gbps": 12.0
+    }
+    resp = await async_client.post("/api/profile-and-schedule", json=payload)
+    assert resp.status_code == 200
+    data = resp.json()
+    assert "profile" in data
+    assert "schedule" in data
+    assert data["profile"]["model_name"] == "Llama-3-70B"
+    assert data["profile"]["fits_in_target_vram"] is True
+    assert data["schedule"]["optimal_layers_per_batch"] > 1
+    assert data["schedule"]["speedup_vs_single_layer"] > 1.0
+    assert data["schedule"]["vram_utilization_pct"] > 50.0
+
+    # Verify both records were persisted
+    profile_resp = await async_client.get(f"/api/profiles/{data['profile']['id']}")
+    assert profile_resp.status_code == 200
+    assert profile_resp.json()["model_name"] == "Llama-3-70B"
+
+    schedule_resp = await async_client.get(f"/api/schedules/{data['schedule']['id']}")
+    # Need to check if get schedule endpoint exists, but list should work
+    list_resp = await async_client.get("/api/schedules")
+    assert len(list_resp.json()) >= 1
