@@ -29,6 +29,20 @@ from app.services.profiler_engine import ProfilerEngine
 from app.services.scheduler_engine import SchedulerEngine
 from app.services.diagnostic_engine import DiagnosticEngine
 from app.services.llm_advisory import LLMAdvisoryService
+from app.models.schemas import (
+    ProfileRequest,
+    ProfileResult,
+    LayerProfileItem,
+    ScheduleRequest,
+    ScheduleResult,
+    DiagnosticRequest,
+    DiagnosticResult,
+    AdvisoryRequest,
+    AdvisoryResponse,
+    AuditLogItem,
+    ProfileAndScheduleRequest,
+    ProfileAndScheduleResult
+)
 
 router = APIRouter()
 
@@ -148,6 +162,74 @@ async def create_schedule(
 
     await log_action(db, "CREATE_SCHEDULE", user.sub, f"Created schedule with batch size {result.optimal_layers_per_batch}")
     return result
+
+# --- Combined Workflow: Profile + Auto-Schedule ---
+@router.post("/profile-and-schedule", response_model=ProfileAndScheduleResult)
+async def create_profile_and_schedule(
+    req: ProfileAndScheduleRequest,
+    db: AsyncSession = Depends(get_db),
+    user: AuthenticatedUser = Depends(require_role("operator"))
+):
+    # Step 1: Run profiler
+    profile_req = ProfileRequest(
+        model_name=req.model_name,
+        parameter_count_billions=req.parameter_count_billions,
+        precision_bits=req.precision_bits,
+        total_layers=req.total_layers,
+        context_length=req.context_length,
+        target_vram_gb=req.target_vram_gb
+    )
+    profile_result = ProfilerEngine.run_profiling(profile_req)
+
+    # Persist profile
+    profile_record = ProfileRecord(
+        model_name=profile_result.model_name,
+        parameter_count_billions=profile_result.parameter_count_billions,
+        precision_bits=profile_result.precision_bits,
+        total_layers=profile_result.total_layers,
+        target_vram_gb=profile_result.target_vram_gb,
+        single_layer_vram_mb=profile_result.single_layer_vram_mb,
+        full_model_vram_gb=profile_result.full_model_vram_gb,
+        fits_in_target_vram=profile_result.fits_in_target_vram,
+        vram_headroom_mb=profile_result.vram_headroom_mb,
+        layers_json=json.dumps([l.model_dump() for l in profile_result.layers])
+    )
+    db.add(profile_record)
+    await db.commit()
+    await db.refresh(profile_record)
+    profile_result.id = profile_record.id
+    profile_result.created_at = profile_record.created_at
+
+    # Step 2: Run scheduler using profiler's single-layer VRAM
+    # Default available_vram_mb to target_vram_gb * 1024 * 0.95 (95% of target for scheduler)
+    available_vram_mb = req.available_vram_mb if req.available_vram_mb else (req.target_vram_gb * 1024.0 * 0.95)
+    schedule_req = ScheduleRequest(
+        total_layers=req.total_layers,
+        single_layer_mb=profile_result.single_layer_vram_mb,
+        available_vram_mb=available_vram_mb,
+        pcie_bandwidth_gbps=req.pcie_bandwidth_gbps
+    )
+    schedule_result = SchedulerEngine.calculate_optimal_schedule(schedule_req)
+
+    # Persist schedule
+    schedule_record = ScheduleRecord(
+        optimal_layers_per_batch=schedule_result.optimal_layers_per_batch,
+        total_batches=schedule_result.total_batches,
+        vram_utilization_pct=schedule_result.vram_utilization_pct,
+        total_transfer_time_seconds=schedule_result.total_transfer_time_seconds,
+        speedup_vs_single_layer=schedule_result.speedup_vs_single_layer,
+        chunks_json=json.dumps([c.model_dump() for c in schedule_result.chunks])
+    )
+    db.add(schedule_record)
+    await db.commit()
+    await db.refresh(schedule_record)
+    schedule_result.id = schedule_record.id
+    schedule_result.created_at = schedule_record.created_at
+
+    await log_action(db, "CREATE_PROFILE_AND_SCHEDULE", user.sub,
+                     f"Auto-profiling + scheduling for {req.model_name}: batch={schedule_result.optimal_layers_per_batch} layers, speedup={schedule_result.speedup_vs_single_layer}x")
+
+    return ProfileAndScheduleResult(profile=profile_result, schedule=schedule_result)
 
 @router.get("/schedules", response_model=List[ScheduleResult])
 async def list_schedules(

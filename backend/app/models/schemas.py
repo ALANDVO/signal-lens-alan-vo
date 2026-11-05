@@ -96,6 +96,28 @@ class AdvisoryResponse(BaseModel):
     is_simulated: bool
     grounded_record_id: Optional[str] = None
 
+class ProfileAndScheduleRequest(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+
+    # Profiler parameters
+    model_name: str = Field(..., description="Target model name, e.g., Llama-2-70b, Llama-3-70b, Qwen-7B")
+    parameter_count_billions: float = Field(70.0, ge=0.5, le=500.0)
+    precision_bits: int = Field(4, description="Quantization bitwidth: 4, 8, 16")
+    total_layers: int = Field(80, ge=1, le=200)
+    context_length: int = Field(2048, ge=128, le=131072)
+    target_vram_gb: float = Field(4.0, ge=1.0, le=96.0)
+
+    # Scheduler parameters (optional, defaults derived from profiler)
+    pcie_bandwidth_gbps: float = Field(12.0, ge=1.0, le=64.0)
+    available_vram_mb: Optional[float] = Field(None, description="Override available VRAM in MB (defaults to target_vram_gb * 1024 * 0.95)")
+
+
+class ProfileAndScheduleResult(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+
+    profile: ProfileResult
+    schedule: ScheduleResult
+
 class AuditLogItem(BaseModel):
     id: int
     timestamp: datetime

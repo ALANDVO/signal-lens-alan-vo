@@ -3,7 +3,7 @@
 > Work in progress. This checkpoint may be incomplete or fail tests. See PLAN.md and STATUS.md before use.
 
 
-Current version: `1.0.0`.
+Current version: `1.2.0`.
 
 SignalLens addresses the challenge of running massive large language models (such as 70B and 405B parameter models) on commodity hardware with strictly constrained GPU VRAM (e.g. 4GB to 16GB GPUs). Using layer-pipelined sequential inference architectures inspired by AirLLM, SignalLens provides memory modeling, dynamic multi-layer batch scheduling, and runtime compatibility diagnostics for ML engineers and infrastructure developers.
 
