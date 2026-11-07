@@ -53,3 +53,7 @@ All notable changes to this project will be documented in this file.
 - Fast, deterministic offline inference pipeline simulation and advisory opt-in multi-provider LLM explainers.
 - FastAPI backend with SQLite persistence, audit logging, role-based authorization, and OIDC Keycloak support.
 - React TypeScript dashboard with interactive memory visualizers, schedule planners, and diagnostic reports.
+
+---
+
+Alan Vo · [alanvo.net](https://alanvo.net)

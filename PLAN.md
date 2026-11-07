@@ -58,3 +58,6 @@ Acceptance:
 - Stream live VRAM usage, PCIe RX/TX throughput, and GPU compute utilization via WebSocket
 - Compare theoretical AirLLM layer transfer speeds against observed real-world disk-to-VRAM transfers
 
+---
+
+Alan Vo · [alanvo.net](https://alanvo.net)
