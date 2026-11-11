@@ -3,9 +3,10 @@ import { MemoryProfiler } from './components/MemoryProfiler';
 import { LayerScheduler } from './components/LayerScheduler';
 import { DiagnosticConsole } from './components/DiagnosticConsole';
 import { AuditLogView } from './components/AuditLogView';
+import { ProfileAndSchedule } from './components/ProfileAndSchedule';
 
 export const App: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'profile' | 'schedule' | 'diagnostic' | 'audit'>('profile');
+  const [activeTab, setActiveTab] = useState<'profile' | 'schedule' | 'diagnostic' | 'audit' | 'combined'>('profile');
 
   return (
     <div className="app-container">
@@ -38,6 +39,12 @@ export const App: React.FC = () => {
             Layer Scheduler
           </button>
           <button
+            className={`tab-btn ${activeTab === 'combined' ? 'active' : ''}`}
+            onClick={() => setActiveTab('combined')}
+          >
+            Profile + Auto-Schedule
+          </button>
+          <button
             className={`tab-btn ${activeTab === 'diagnostic' ? 'active' : ''}`}
             onClick={() => setActiveTab('diagnostic')}
           >
@@ -55,12 +62,14 @@ export const App: React.FC = () => {
       <main className="main-content">
         {activeTab === 'profile' && <MemoryProfiler />}
         {activeTab === 'schedule' && <LayerScheduler />}
+        {activeTab === 'combined' && <ProfileAndSchedule />}
         {activeTab === 'diagnostic' && <DiagnosticConsole />}
         {activeTab === 'audit' && <AuditLogView />}
       </main>
 
       <footer className="app-footer">
         <p>SignalLens | Maintained by Alan Vo &lt;alanvo@gmail.com&gt;</p>
+        <p>Alan Vo &middot; <a href="https://alanvo.net" target="_blank" rel="noopener noreferrer">alanvo.net</a> &middot; <a href="https://x.com/alanvoasi" target="_blank" rel="noopener noreferrer">X: @alanvoasi</a></p>
       </footer>
     </div>
   );

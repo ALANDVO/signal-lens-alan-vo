@@ -3,7 +3,7 @@
 > Work in progress. This checkpoint may be incomplete or fail tests. See PLAN.md and STATUS.md before use.
 
 
-Current version: `1.2.0`.
+Current version: `1.3.0`.
 
 SignalLens addresses the challenge of running massive large language models (such as 70B and 405B parameter models) on commodity hardware with strictly constrained GPU VRAM (e.g. 4GB to 16GB GPUs). Using layer-pipelined sequential inference architectures inspired by AirLLM, SignalLens provides memory modeling, dynamic multi-layer batch scheduling, and runtime compatibility diagnostics for ML engineers and infrastructure developers.
 
@@ -50,6 +50,7 @@ PYTHONPATH=backend .venv/bin/python -m pytest backend/tests -v
 3. **Runtime Compatibility & Error Diagnostic:** Pinpoints common breaking changes across Hugging Face Transformers, PyTorch, CUDA, and ROCm environments.
 4. **Advisory Telemetry Service:** Grounded analysis with opt-in support for OpenAI-compatible, Anthropic, Gemini, and Ollama providers, with full deterministic offline fallback.
 5. **Enterprise-Ready Authentication & Auditing:** OIDC authorization code flow integrated with Keycloak, SAML brokering architecture, and transactional SQLite audit trails.
+6. **Combined Profile + Auto-Schedule Workflow:** One-click workflow that runs memory profiling and automatically computes the optimal layer batching schedule using the profiler's single-layer VRAM calculation, with combined results view and export capabilities.
 
 ## Authentication & SAML Setup
 
@@ -109,6 +110,7 @@ docker compose up -d
 - `GET /api/diagnostics` — List historical diagnostic execution reports.
 - `POST /api/advisory` — Request grounded advisory recommendations (offline or LLM).
 - `GET /api/audit-logs` — Administrative audit log trail of all executed operations.
+- `POST /api/profile-and-schedule` — Run combined memory profiling and automatic optimal layer batching schedule in one request.
 
 ## Security Limitations
 - External LLM keys must only be specified via server-side environment variables and are never transmitted to clients.
