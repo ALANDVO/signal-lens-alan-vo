@@ -16,8 +16,6 @@
         "Combined Profile + Auto-Schedule workflow (`POST /api/profile-and-schedule`) for one-click profiling and optimal batch scheduling"
       ],
       "implementation": [
-      ],
-      "implementation": [
         "backend/app/main.py",
         "backend/app/core/config.py",
         "backend/app/core/security.py",
@@ -33,6 +31,7 @@
         "frontend/src/components/LayerScheduler.tsx",
         "frontend/src/components/DiagnosticConsole.tsx",
         "frontend/src/components/AuditLogView.tsx",
+        "frontend/src/components/ProfileAndSchedule.tsx",
         "frontend/src/api/client.ts"
       ],
       "tests": [

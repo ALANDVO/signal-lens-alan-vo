@@ -57,6 +57,21 @@ export interface ScheduleResult {
   speedup_vs_single_layer: number;
   created_at?: string;
 }
+export interface ProfileAndScheduleRequest {
+  model_name: string;
+  parameter_count_billions: number;
+  precision_bits: number;
+  total_layers: number;
+  context_length: number;
+  target_vram_gb: number;
+  pcie_bandwidth_gbps?: number;
+  available_vram_mb?: number;
+}
+
+export interface ProfileAndScheduleResult {
+  profile: ProfileResult;
+  schedule: ScheduleResult;
+}
 
 export interface DiagnosticRequest {
   transformers_version: string;
@@ -175,6 +190,15 @@ export const apiClient = {
   async getAuditLogs(): Promise<AuditLogItem[]> {
     const res = await fetch(`${API_BASE}/audit-logs`);
     if (!res.ok) throw new Error(`Failed to fetch audit logs: ${res.status}`);
+    return res.json();
+  },
+  async createProfileAndSchedule(req: ProfileAndScheduleRequest): Promise<ProfileAndScheduleResult> {
+    const res = await fetch(`${API_BASE}/profile-and-schedule`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(req)
+    });
+    if (!res.ok) throw new Error(`Failed to create profile and schedule: ${res.status}`);
     return res.json();
   }
 };

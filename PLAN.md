@@ -21,7 +21,7 @@ Acceptance:
 - OIDC auth flow with mock test harness and local demo mode
 - Combined Profile + Auto-Schedule workflow (`POST /api/profile-and-schedule`) for one-click profiling and optimal batch scheduling
 
-Implementation: `backend/app/main.py`, `backend/app/core/config.py`, `backend/app/core/security.py`, `backend/app/models/schemas.py`, `backend/app/models/database.py`, `backend/app/services/profiler_engine.py`, `backend/app/services/scheduler_engine.py`, `backend/app/services/diagnostic_engine.py`, `backend/app/services/llm_advisory.py`, `backend/app/api/routes.py`, `frontend/src/App.tsx`, `frontend/src/components/MemoryProfiler.tsx`, `frontend/src/components/LayerScheduler.tsx`, `frontend/src/components/DiagnosticConsole.tsx`, `frontend/src/components/AuditLogView.tsx`, `frontend/src/api/client.ts`
+Implementation: `backend/app/main.py`, `backend/app/core/config.py`, `backend/app/core/security.py`, `backend/app/models/schemas.py`, `backend/app/models/database.py`, `backend/app/services/profiler_engine.py`, `backend/app/services/scheduler_engine.py`, `backend/app/services/diagnostic_engine.py`, `backend/app/services/llm_advisory.py`, `backend/app/api/routes.py`, `frontend/src/App.tsx`, `frontend/src/components/MemoryProfiler.tsx`, `frontend/src/components/LayerScheduler.tsx`, `frontend/src/components/DiagnosticConsole.tsx`, `frontend/src/components/AuditLogView.tsx`, `frontend/src/components/ProfileAndSchedule.tsx`, `frontend/src/api/client.ts`
 
 Tests: `backend/tests/test_profiler.py`, `backend/tests/test_scheduler.py`, `backend/tests/test_diagnostics.py`, `backend/tests/test_api.py`, `backend/tests/test_auth.py`, `frontend/src/App.test.tsx`
 

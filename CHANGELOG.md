@@ -1,8 +1,22 @@
 # Changelog
 
-## 1.3.0 — work-in-progress checkpoint
+## 1.4.0 — work-in-progress checkpoint
 
 Partial code published for continued development. Known issues: STATUS.md.
+
+## 1.3.0 — 2026-11-11
+
+### Added
+- **Frontend Combined Profile + Auto-Schedule Workflow**: New "Profile + Auto-Schedule" tab in the React dashboard that exposes the existing `POST /api/profile-and-schedule` backend endpoint.
+- One-click workflow that runs memory profiling and automatically computes the optimal layer batching schedule using the profiler's single-layer VRAM calculation.
+- Combined results view showing both memory profile metrics (single-layer VRAM, full model VRAM, headroom, fit status) and schedule optimization (optimal batch size, total batches, VRAM utilization, speedup factor).
+- Layer chunk scheduling table with per-chunk VRAM usage and PCIe transfer time details.
+- Export to JSON/CSV for combined workflow results including request parameters for reproducibility.
+- Added Alan Vo contact links (website and X profile) to application footer.
+
+### Fixed
+- Updated `pyproject.toml` version to 1.3.0 to match `VERSION` file.
+- Updated README version reference to 1.3.0.
 
 ## 1.2.0 — 2026-11-05
 
