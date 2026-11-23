@@ -43,12 +43,14 @@ Tests: `frontend/src/App.test.tsx`
 
 ### multi-gpu-heterogeneous-mesh — Heterogeneous Multi-GPU Pipeline Partitioning
 
-Status: planned
+Status: in_progress
 
 Acceptance:
 - Partition transformer layers across asymmetric legacy GPUs (e.g. Tesla K80 + M40 + RTX 3060)
 - Compute interconnect PCIe and NVLink bandwidth transfer bottlenecks
 - Generate multi-device layer scheduling tables
+
+Tests: `backend/tests/test_multi_gpu_mesh.py`
 
 ### real-time-hardware-telemetry — Live NVML & ROCm SMI Hardware Telemetry Stream
 
