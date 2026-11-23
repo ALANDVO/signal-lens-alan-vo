@@ -69,11 +69,14 @@
     {
       "id": "multi-gpu-heterogeneous-mesh",
       "title": "Heterogeneous Multi-GPU Pipeline Partitioning",
-      "status": "planned",
+      "status": "in_progress",
       "acceptance": [
         "Partition transformer layers across asymmetric legacy GPUs (e.g. Tesla K80 + M40 + RTX 3060)",
         "Compute interconnect PCIe and NVLink bandwidth transfer bottlenecks",
         "Generate multi-device layer scheduling tables"
+      ],
+      "tests": [
+        "backend/tests/test_multi_gpu_mesh.py"
       ]
     },
     {
