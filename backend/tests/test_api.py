@@ -142,3 +142,38 @@ async def test_create_profile_and_schedule_combined(async_client: AsyncClient):
     # Need to check if get schedule endpoint exists, but list should work
     list_resp = await async_client.get("/api/schedules")
     assert len(list_resp.json()) >= 1
+
+
+@pytest.mark.asyncio
+async def test_multi_gpu_partition_workflow(async_client: AsyncClient):
+    payload = {
+        "parameter_count_billions": 70.0,
+        "precision_bits": 4,
+        "total_layers": 80,
+        "context_length": 2048,
+        "hidden_dim": 8192,
+        "gpu_config": "tesla_k80+m40+rtx_3060",
+    }
+    resp = await async_client.post("/api/multi-gpu-partition", json=payload)
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["total_layers"] == 80
+    assert set(data["gpu_names"]) == {"Tesla K80", "NVIDIA M40", "RTX 3060"}
+    # Every layer index 0..79 assigned exactly once across the GPUs
+    assigned = [i for layers in data["gpu_assignments"].values() for i in layers]
+    assert sorted(assigned) == list(range(80))
+    assert len(data["transfer_bottlenecks_mbps"]) == 3  # 3 GPUs -> 3 pairs
+    assert 0.0 <= data["schedule_efficiency_pct"] <= 100.0
+
+
+@pytest.mark.asyncio
+async def test_multi_gpu_partition_invalid_config(async_client: AsyncClient):
+    payload = {
+        "parameter_count_billions": 70.0,
+        "precision_bits": 4,
+        "total_layers": 80,
+        "context_length": 2048,
+        "gpu_config": "nonexistent_gpu",
+    }
+    resp = await async_client.post("/api/multi-gpu-partition", json=payload)
+    assert resp.status_code == 400

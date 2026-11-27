@@ -4,7 +4,7 @@ Each round completes one feature or repair. Future items are planned, not implem
 
 ## Current round
 
-layer-pipelined-memory-profiler
+multi-gpu-heterogeneous-mesh
 
 ## Roadmap
 
@@ -43,14 +43,16 @@ Tests: `frontend/src/App.test.tsx`
 
 ### multi-gpu-heterogeneous-mesh — Heterogeneous Multi-GPU Pipeline Partitioning
 
-Status: in_progress
+Status: done
 
 Acceptance:
 - Partition transformer layers across asymmetric legacy GPUs (e.g. Tesla K80 + M40 + RTX 3060)
 - Compute interconnect PCIe and NVLink bandwidth transfer bottlenecks
 - Generate multi-device layer scheduling tables
 
-Tests: `backend/tests/test_multi_gpu_mesh.py`
+Implementation: `backend/app/services/multi_gpu_mesh.py`, `backend/app/models/schemas.py`, `backend/app/api/routes.py`
+
+Tests: `backend/tests/test_multi_gpu_mesh.py`, `backend/tests/test_api.py`
 
 ### real-time-hardware-telemetry — Live NVML & ROCm SMI Hardware Telemetry Stream
 

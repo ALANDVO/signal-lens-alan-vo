@@ -124,3 +124,31 @@ class AuditLogItem(BaseModel):
     action: str
     user_sub: str
     details: str
+
+
+class MultiGPUMeshRequest(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+
+    parameter_count_billions: float = Field(70.0, ge=0.5, le=500.0)
+    precision_bits: int = Field(4, description="Quantization bitwidth: 4, 8, 16")
+    total_layers: int = Field(80, ge=1, le=200)
+    context_length: int = Field(2048, ge=128, le=131072)
+    hidden_dim: int = Field(8192, ge=512, le=32768)
+    gpu_config: str = Field(
+        "tesla_k80+m40+rtx_3060",
+        description="Plus-separated GPU profile keys from GPU_PROFILES",
+    )
+
+
+class MultiGPUMeshResult(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+
+    layer_profile_mb: float
+    total_layers: int
+    gpu_names: List[str]
+    gpu_assignments: Dict[str, List[int]]
+    gpu_vram_usage_mb: Dict[str, float]
+    gpu_compute_balance: Dict[str, float]
+    transfer_bottlenecks_mbps: List[List[Any]]
+    total_batches: int
+    schedule_efficiency_pct: float

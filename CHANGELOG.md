@@ -1,6 +1,13 @@
 # Changelog
 
+## 1.7.0 — work-in-progress checkpoint
+
+Partial code published for continued development. Known issues: STATUS.md.
+
 ## 1.6.0 — work-in-progress checkpoint
+
+### Added
+- **Heterogeneous Multi-GPU Partitioning endpoint**: `POST /api/multi-gpu-partition` exposes the layer-partitioning engine over HTTP, returning per-GPU layer assignments, VRAM usage, PCIe/NVLink transfer bottlenecks, and schedule efficiency for asymmetric legacy GPU configs (Tesla K80 + M40 + RTX 3060). Unknown GPU configs return HTTP 400.
 
 Partial code published for continued development. Known issues: STATUS.md.
 
