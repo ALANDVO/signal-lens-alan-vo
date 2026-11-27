@@ -3,7 +3,7 @@
 > Work in progress. This checkpoint may be incomplete or fail tests. See PLAN.md and STATUS.md before use.
 
 
-Current version: `1.6.0`.
+Current version: `1.7.0`.
 
 SignalLens addresses the challenge of running massive large language models (such as 70B and 405B parameter models) on commodity hardware with strictly constrained GPU VRAM (e.g. 4GB to 16GB GPUs). Using layer-pipelined sequential inference architectures inspired by AirLLM, SignalLens provides memory modeling, dynamic multi-layer batch scheduling, and runtime compatibility diagnostics for ML engineers and infrastructure developers.
 
@@ -109,6 +109,7 @@ docker compose up -d
 - `POST /api/diagnostics` — Run environment compatibility and error diagnostic check.
 - `GET /api/diagnostics` — List historical diagnostic execution reports.
 - `POST /api/advisory` — Request grounded advisory recommendations (offline or LLM).
+- `POST /api/multi-gpu-partition` — Partition transformer layers across asymmetric legacy GPUs (e.g. Tesla K80 + M40 + RTX 3060); returns per-GPU assignments, VRAM usage, and PCIe/NVLink transfer bottlenecks.
 - `GET /api/audit-logs` — Administrative audit log trail of all executed operations.
 - `POST /api/profile-and-schedule` — Run combined memory profiling and automatic optimal layer batching schedule in one request.
 

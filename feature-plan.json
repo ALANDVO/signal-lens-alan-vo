@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "current_feature": "layer-pipelined-memory-profiler",
+  "current_feature": "multi-gpu-heterogeneous-mesh",
   "features": [
     {
       "id": "layer-pipelined-memory-profiler",
@@ -69,14 +69,20 @@
     {
       "id": "multi-gpu-heterogeneous-mesh",
       "title": "Heterogeneous Multi-GPU Pipeline Partitioning",
-      "status": "in_progress",
+      "status": "done",
       "acceptance": [
         "Partition transformer layers across asymmetric legacy GPUs (e.g. Tesla K80 + M40 + RTX 3060)",
         "Compute interconnect PCIe and NVLink bandwidth transfer bottlenecks",
         "Generate multi-device layer scheduling tables"
       ],
       "tests": [
-        "backend/tests/test_multi_gpu_mesh.py"
+        "backend/tests/test_multi_gpu_mesh.py",
+        "backend/tests/test_api.py"
+      ],
+      "implementation": [
+        "backend/app/services/multi_gpu_mesh.py",
+        "backend/app/models/schemas.py",
+        "backend/app/api/routes.py"
       ]
     },
     {

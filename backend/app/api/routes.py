@@ -22,13 +22,16 @@ from app.models.schemas import (
     DiagnosticResult,
     AdvisoryRequest,
     AdvisoryResponse,
-    AuditLogItem
+    AuditLogItem,
+    MultiGPUMeshRequest,
+    MultiGPUMeshResult,
 )
 from app.core.security import get_current_user, require_role, AuthenticatedUser
 from app.services.profiler_engine import ProfilerEngine
 from app.services.scheduler_engine import SchedulerEngine
 from app.services.diagnostic_engine import DiagnosticEngine
 from app.services.llm_advisory import LLMAdvisoryService
+from app.services.multi_gpu_mesh import generate_partitioning_schedule
 from app.models.schemas import (
     ProfileRequest,
     ProfileResult,
@@ -339,3 +342,41 @@ async def get_audit_logs(
         )
         for r in records
     ]
+
+# --- Workflow 4: Heterogeneous Multi-GPU Pipeline Partitioning ---
+@router.post("/multi-gpu-partition", response_model=MultiGPUMeshResult)
+async def create_multi_gpu_partition(
+    req: MultiGPUMeshRequest,
+    db: AsyncSession = Depends(get_db),
+    user: AuthenticatedUser = Depends(require_role("viewer"))
+):
+    try:
+        schedule = generate_partitioning_schedule(
+            total_layers=req.total_layers,
+            param_billions=req.parameter_count_billions,
+            precision_bits=req.precision_bits,
+            context_len=req.context_length,
+            hidden_dim=req.hidden_dim,
+            gpu_config_name=req.gpu_config,
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc))
+
+    await log_action(
+        db,
+        "MULTI_GPU_PARTITION",
+        user.sub,
+        f"Partitioned {req.total_layers} layers across {req.gpu_config}",
+    )
+
+    return MultiGPUMeshResult(
+        layer_profile_mb=schedule["layer_profile_mb"],
+        total_layers=schedule["total_layers"],
+        gpu_names=schedule["gpu_names"],
+        gpu_assignments=schedule["gpu_assignments"],
+        gpu_vram_usage_mb=schedule["gpu_vram_usage_mb"],
+        gpu_compute_balance=schedule["gpu_compute_balance"],
+        transfer_bottlenecks_mbps=[list(b) for b in schedule["transfer_bottlenecks_mbps"]],
+        total_batches=schedule["total_batches"],
+        schedule_efficiency_pct=schedule["schedule_efficiency_pct"],
+    )
